@@ -27,7 +27,7 @@ De acordo com o maior nº de estudante do nosso grupo (89615), devemos remover a
     \centering
     \includegraphics[width=0.8\linewidth]{fig1.png}
     \caption{Mapa de linhas de alta tensão.}
-    \label{mapa}
+    \label{fig:mapa}
 \end{figure}
 
 Analisando com atenção o problema, chegamos à conclusão que o caminho que o nosso drone tem que percorrer deve ser um caminho Euleriano, ou mais especificamente um circuito Euleriano, pois deve começar e terminar o caminho no mesmo ponto do grafo, que neste caso é o nosso mapa. Um caminho Euleriano é um caminho de um grafo em que todas as arestas são percorridas uma única vez. Esta seria a solução ideal do nosso problema, mas, tal como diz o Teorema de Euler, apenas podemos ter um circuito Euleriano se todos os vértices do nosso grafo tiverem um grau par. Esse não é o caso no mapa que temos, logo para podermos ter um circuito Euleriano teremos que adicionar arestas ao mapa.
@@ -42,7 +42,7 @@ Tal como referimos há pouco, para podemos ter um circuito Euleriano, todos os v
     \centering
     \includegraphics[width=0.8\linewidth]{fig2.png}
     \caption{Vértices de grau ímpar.}
-    \label{verticesimpares}
+    \label{fig:verticesimpares}
 \end{figure}
 
 Podemos ver que todos os vértices exceto o vértice 8 possuem grau ímpar, logo incluiremos todos os vértices exceto o vértice 8 no nosso modelo.
@@ -69,7 +69,7 @@ Os comprimentos de todas as arestas podem ser calculados a partir da seguinte ta
     \centering
     \includegraphics[width=0.8\linewidth]{fig3.png}
     \caption{Distâncias entre todos os vértices do mapa.}
-    \label{dists}
+    \label{fig:dists}
 \end{figure}
 
 \subsection{Função objetivo}
@@ -82,15 +82,31 @@ Minimização do comprimento das arestas a adicionar.\\
 Cada vértice apenas deve fazer parte de uma aresta.\\
 \(\forall i \in V: \sum x_{ij} = 1, j \in V, i < j\)
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{lpsolve1.png}
+    \caption{Ficheiro de input no LPSolve IDE.}
+    \label{fig:lp}
+\end{figure}
+
 \section{Solução ótima}
 
-Depois de introduzir o modelo do problema no \emph{LPSolve}, chegamos a uma aparente solução ótima, onde são criadas arestas a unir os vértices 1 ao 6, o 2 ao 5, o 3 ao 4, o 7 ao 13, o 9 ao 10 e o 11 ao 12, com um comprimento total de 15,41. A seguinte figura ilustra esta solução: 
+Depois de introduzir o modelo do problema no \emph{LPSolve}, chegamos a uma aparente solução ótima, onde são criadas arestas a unir os vértices 1 ao 6, o 2 ao 5, o 3 ao 4, o 7 ao 13, o 9 ao 10 e o 11 ao 12, com um comprimento total de 15,41. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{lpsolve2.png}
+    \caption{Output produzido pelo LPSolve IDE.}
+    \label{fig:lpoutput}
+\end{figure}
+
+A seguinte figura ilustra esta solução: 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\linewidth]{fig4.png}
     \caption{Arestas a adicionar ao grafo.}
-    \label{arestas}
+    \label{fig:arestas}
 \end{figure}
 
 As arestas roxas indicam que o drone terá que percorrer as linhas de alta tensão correspondentes duas vezes, e a aresta amarela indica uma distância que o drone percorrerá pelo ar. Desta forma já temos um grafo onde todos os vértices têm grau par, e podemos então definir um circuito Euleriano para o drone. Visto que o circuito terá que passar por todas as arestas exatamente uma vez, a distância total percorrida pelo drone será sempre a mesma, e não é necessário minimizar esta distância total. Portanto, apenas nos falta desenhar o trajeto do drone. Temos várias possibilidades para este trajeto, por isso iremos apenas apresentar um exemplo:
@@ -99,11 +115,31 @@ As arestas roxas indicam que o drone terá que percorrer as linhas de alta tens�
     \centering
     \includegraphics[width=0.8\linewidth]{fig5.png}
     \caption{Possível solução do problema.}
-    \label{solucao}
+    \label{fig:solucao}
 \end{figure}
 
 Dentro desta solução temos dois possíveis percursos. No primeiro o drone percorre a linha vermelha, depois a linha verde, depois a linha azul e por fim a linha rosa. O outro percurso possível é o inverso deste.
 
 Seja qual for o percurso que definirmos a partir deste mapa, a distância total percorrida pelo drone será sempre a soma dos comprimentos das linhas de alta tensão com o comprimento das arestas que adicionámos, ou seja, 82 + 15,41 = 97,41.
+
+\section{Validação do modelo}
+
+A seguinte tabela ilustra as restrições do nosso modelo, e tal como podemos observar, todas as restrições são cumpridas, para cada vértice de grau ímpar apenas criamos uma aresta. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{fig6.png}
+    \caption{As restrições são todas cumpridas.}
+    \label{fig:restricoes}
+\end{figure}
+
+Hipoteticamente também poderia existir uma solução onde adicionávamos mais que uma aresta por vértice, desde que os vértices permanecessem com grau par continuaria a ser uma solução válida, mas não seria ótima. Para o provar voltámos a correr o nosso modelo no LPSolve, mas trocando o '=' das restrições por '>=', e como agora podemos adicionar mais que um vértice a cada aresta devemos também adicionar o vértice 8. Isto não garante que todos os vértices passem a ser de grau par, mas o que queremos comprovar com este exemplo é que a solução obtida anteriormente é ótima, e é precisamente isso que concluímos, pois o resultado deste novo modelo é exatamente o mesmo. Isto significa que, mesmo que pudéssemos adicionar mais que uma aresta a cada vértice, na solução ideal continuaríamos a adicionar apenas um, logo a nossa restrição no modelo original é válida.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{fig7.png}
+    \caption{Modelo alternativo, onde podemos ligar mais que uma aresta a cada vértice, e respetiva solução.}
+    \label{fig:altmodelo}
+\end{figure}
 
 \end{document}
